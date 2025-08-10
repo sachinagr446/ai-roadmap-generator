@@ -96,7 +96,11 @@ export async function POST(req){
             };
           }
     })
-        const CourseContent = await Promise.all(promises);
+        const CourseContentWithErrors = await Promise.all(promises);
+        
+        // Filter out any chapters that have an error property
+        const CourseContent = CourseContentWithErrors.filter(content => !content.error);
+
         const dbRes=await db.update(coursesTable).set({
            courseContent: CourseContent
         }).where(eq(coursesTable.cid,courseId));
