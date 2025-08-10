@@ -9,28 +9,21 @@ import { eq, max } from 'drizzle-orm';
 const ai = new GoogleGenAI({
   apiKey: process.env.GEMINI_API_KEY,
 });
-const PROMPT=`Depends on Chapter name and Topic Generate content for each topic in HTML 
-
-and give response in JSON format. 
-
-Schema:{
-
-chapterName:<>,
-
+const PROMPT = `Based on the chapter name and topics, generate detailed content for each topic in HTML format.
+Provide the response as a single, valid JSON object with the following schema:
 {
-
-topic:<>,
-
-content:<>
-
+  "chapterName": "string",
+  "topics": [
+    {
+      "topic": "string",
+      "content": "string (HTML content)"
+    }
+  ]
 }
+Do not include any markdown formatting like \`\`\`json or any text outside of the JSON object.
 
-}
-
-: User Input:
-
-
-`
+User Input:
+`;
 export async function POST(req){
     try {
         const {courseJson,courseTitle,courseId}=await req.json();

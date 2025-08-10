@@ -11,15 +11,33 @@ function ChapterContent({courseInfo,refreshData}) {
   const courseContent = courseInfo?.courses?.courseContent;
   const { selectedChapter } = React.useContext(SelectedChapterContext);
   const chapter = courseContent?.[selectedChapter];
-  const videoData = courseContent?.[selectedChapter]?.youtubeVideo;
-  const topics = courseContent?.[selectedChapter]?.courseData.topics;
 
   if (!chapter) {
     return <div className='p-10'>No chapter selected or no content available.</div>;
   }
+
+  
+  if (chapter.error) {
+    return (
+      <div className='p-10 text-red-600 bg-red-50 rounded-lg shadow-md'>
+        <h2 className='font-bold text-2xl mb-4'>Error Generating Content</h2>
+        <p>We couldn't generate the content for: <strong>{chapter.chapterName}</strong>.</p>
+        <p className='mt-2 text-sm'><strong>Details:</strong> {chapter.error}</p>
+        {chapter.rawResponse && (
+          <>
+            <p className='mt-4 text-xs text-gray-500'>Raw AI Response (for debugging):</p>
+            <pre className='bg-gray-100 p-2 rounded mt-1 text-xs text-black'>{chapter.rawResponse}</pre>
+          </>
+        )}
+      </div>
+    );
+  }
+
+  const videoData = chapter?.youtubeVideo;
+  const topics = chapter?.courseData?.topics;
   let completedChapters = Array.isArray(enrollCourse?.completedChapters) ? enrollCourse.completedChapters : [];
+  
   const markChapterCompleted = async () => {
-    
       completedChapters.push(selectedChapter);
       const result=await axios.put('/api/enroll-course', {
         courseId: enrollCourse.cid,
@@ -50,7 +68,7 @@ function ChapterContent({courseInfo,refreshData}) {
       </div>
       
       <div>
-        {chapter.courseData?.topics?.map((topic, idx) => (
+        {topics?.map((topic, idx) => (
           <div key={idx} className='mb-2 p-4 bg-secondary rounded-lg mt-12 shadow-md'>
             <h3 className='font-bold text-lg text-primary'>{topic.topic}</h3>
             <div dangerouslySetInnerHTML={{ __html: topic?.content }} style={{

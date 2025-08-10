@@ -13,7 +13,7 @@ function ChapterListSidebar({courseInfo}) {
 const course =courseInfo?.courses;
 const enrollCourse=courseInfo?.enrollCourse;
 const courseContent=courseInfo?.courses?.courseContent;
-const completedChapters = enrollCourse?.completedChapters ?? [];
+const completedChapters = Array.isArray(enrollCourse?.completedChapters) ? enrollCourse.completedChapters : [];
 const {selectedChapter,setSelectedChapter}=React.useContext(SelectedChapterContext);  
   console.log(courseContent);
   return (
