@@ -9,7 +9,6 @@ export async function GET(req){
     const courseId=searchParams?.get('courseId');
     const user= await currentUser();
     if(courseId){
-
         const res=await db.select().from(coursesTable).where(eq(coursesTable.cid,courseId)).orderBy(desc(coursesTable.id));
         console.log(res);
         return NextResponse.json(res[0]);
